@@ -10,7 +10,7 @@ namespace ObjectPrinting.Serialization
 {
     internal class Serializer
     {
-        private static readonly HashSet<Type> finalTypes =
+        private static readonly HashSet<Type> FinalTypes =
         [
             typeof(int), typeof(double), typeof(float), typeof(string), typeof(DateTime), typeof(TimeSpan), typeof(Guid)
         ];
@@ -41,7 +41,7 @@ namespace ObjectPrinting.Serialization
             if (obj is null)
                 return string.Intern($"null{Environment.NewLine}");
 
-            if (finalTypes.Contains(obj.GetType()))
+            if (FinalTypes.Contains(obj.GetType()))
                 return $"{obj}{Environment.NewLine}";
 
             if (!visited.Add(obj))
@@ -74,7 +74,7 @@ namespace ObjectPrinting.Serialization
                 string serializedMember;
                 if (TryGetCustomSerializer(memberInfo, out var serializer))
                     serializedMember = $"{(string)serializer.DynamicInvoke(memberInfo.GetMemberValue(obj))}{Environment.NewLine}";
-                else if (finalTypes.Contains(type))
+                else if (FinalTypes.Contains(type))
                     serializedMember = $"{obj}{Environment.NewLine}";
                 else
                     serializedMember = Serialize(memberInfo.GetMemberValue(obj), nestingLevel + 1);

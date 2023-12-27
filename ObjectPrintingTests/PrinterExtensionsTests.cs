@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ObjectPrinting;
-using ObjectPrinting.Solved.Tests;
+using ObjectPrinting.Extensions;
+using ObjectPrintingTests.TestHelpers;
 
 namespace ObjectPrintingTests
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace ObjectPrinting.Serialization
+namespace ObjectPrinting
 {
     public class MemberPrintingConfig<TOwner, TPropType> : IInnerPrintingConfig<TOwner, TPropType>
     {

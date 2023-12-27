@@ -1,13 +1,11 @@
 ﻿using NUnit.Framework;
 using FluentAssertions;
-using ObjectPrinting;
 using System.Globalization;
 using ObjectPrinter = ObjectPrinting.ObjectPrinter;
 using System;
 using System.Collections.Generic;
 using ObjectPrinting.Extensions;
 using ObjectPrintingTests.TestHelpers;
-using ObjectPrinting.Serialization;
 
 namespace ObjectPrintingTests
 {
@@ -34,9 +32,9 @@ namespace ObjectPrintingTests
         public void WhenAreNoCircularLinks_ShouldReturnCorrectAnswer()
         {
             var subPerson = new SubPerson();
-            var person = new Person() {SubPerson = subPerson};
+            var person = new Person {SubPerson = subPerson};
 
-            var parent = new Parent()
+            var parent = new Parent
             {
                 Person = person,
                 SubPerson = subPerson
@@ -161,48 +159,50 @@ namespace ObjectPrintingTests
         public void WhenFieldIsList_ShouldReturnCorrectCollectionSerialization()
         {
             var collections = new CollectionsKeeper();
-            collections.stringsList = new List<string>() { "один", "два" };
+            collections.Strings = new List<string> { "один", "два" };
 
             var printer = collections.CreatePrinter();
 
             var actual = printer
                 .PrintToString(collections);
 
-            actual.Should().Be($"CollectionsKeeper{Environment.NewLine}\tstringsList = List`1{Environment.NewLine}\t\tодин{Environment.NewLine}\t\tдва{Environment.NewLine}\tintsArray = null{Environment.NewLine}\tdictionary = null{Environment.NewLine}");
+            actual.Should().Be($"CollectionsKeeper{Environment.NewLine}\tStrings = List`1{Environment.NewLine}\t\tодин{Environment.NewLine}\t\tдва{Environment.NewLine}\tInts = null{Environment.NewLine}\tDictionary = null{Environment.NewLine}");
         }
 
         [Test]
         public void WhenFieldIsArray_ShouldReturnCorrectCollectionSerialization()
         {
-            var collections = new CollectionsKeeper();
-            collections.intsArray = new int[] { 1, 2, 3 };
+            var collections = new CollectionsKeeper
+            {
+                Ints = new[] { 1, 2, 3 }
+            };
 
             var printer = collections.CreatePrinter();
 
             var actual = printer
                 .PrintToString(collections);
 
-            actual.Should().Be($"CollectionsKeeper{Environment.NewLine}\tstringsList = null{Environment.NewLine}\tintsArray = Int32[]{Environment.NewLine}\t\t1{Environment.NewLine}\t\t2{Environment.NewLine}\t\t3{Environment.NewLine}\tdictionary = null{Environment.NewLine}");
+            actual.Should().Be($"CollectionsKeeper{Environment.NewLine}\tStrings = null{Environment.NewLine}\tInts = Int32[]{Environment.NewLine}\t\t1{Environment.NewLine}\t\t2{Environment.NewLine}\t\t3{Environment.NewLine}\tDictionary = null{Environment.NewLine}");
         }
 
         [Test]
         public void WhenFieldIsDictionary_ShouldReturnCorrectCollectionSerialization()
         {
             var collections = new CollectionsKeeper();
-            collections.dictionary = new Dictionary<int, string>() { {1, "один"} , { 2, "два" }};
+            collections.Dictionary = new Dictionary<int, string> { {1, "один"} , { 2, "два" }};
 
             var printer = collections.CreatePrinter();
 
             var actual = printer
                 .PrintToString(collections);
 
-            actual.Should().Be($"CollectionsKeeper{Environment.NewLine}\tstringsList = null{Environment.NewLine}\tintsArray = null{Environment.NewLine}\tdictionary = Dictionary`2{Environment.NewLine}\t\tKeyValuePair`2{Environment.NewLine}\t\t\tKey = 1{Environment.NewLine}\t\t\tValue = один{Environment.NewLine}\t\tKeyValuePair`2{Environment.NewLine}\t\t\tKey = 2{Environment.NewLine}\t\t\tValue = два{Environment.NewLine}");
+            actual.Should().Be($"CollectionsKeeper{Environment.NewLine}\tStrings = null{Environment.NewLine}\tInts = null{Environment.NewLine}\tDictionary = Dictionary`2{Environment.NewLine}\t\tKeyValuePair`2{Environment.NewLine}\t\t\tKey = 1{Environment.NewLine}\t\t\tValue = один{Environment.NewLine}\t\tKeyValuePair`2{Environment.NewLine}\t\t\tKey = 2{Environment.NewLine}\t\t\tValue = два{Environment.NewLine}");
         }
 
         [Test]
         public void WhenPassCollectionToPrinter_ShouldReturnThisCollectionInString()
         {
-            var dict = new Dictionary<int, string>() {{1, "один"} };
+            var dict = new Dictionary<int, string> {{1, "один"} };
 
             var printer = dict.CreatePrinter();
 

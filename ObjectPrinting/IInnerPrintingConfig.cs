@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ObjectPrinting.Serialization
+namespace ObjectPrinting
 {
     public interface IInnerPrintingConfig<TOwner, TPropType>
     {

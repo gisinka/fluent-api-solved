@@ -4,10 +4,10 @@ namespace ObjectPrintingTests.TestHelpers
 {
     public class CollectionsKeeper
     {
-        public List<string> stringsList;
+        public List<string> Strings { get; set; }
 
-        public int[] intsArray;
+        public int[] Ints { get; set; }
 
-        public Dictionary<int, string> dictionary;
+        public Dictionary<int, string> Dictionary { get; set; }
     }
 }
