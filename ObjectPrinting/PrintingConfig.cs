@@ -8,10 +8,10 @@ namespace ObjectPrinting
 {
     public class PrintingConfig<TOwner>
     {
-        private readonly HashSet<MemberInfo> excludedMembers = new HashSet<MemberInfo>();
-        private readonly HashSet<Type> excludedTypes = new HashSet<Type>();
-        private readonly Dictionary<MemberInfo, Delegate> membersSerializers = new Dictionary<MemberInfo, Delegate>();
-        private readonly Dictionary<Type, Delegate> typeSerializers = new Dictionary<Type, Delegate>();
+        private readonly HashSet<MemberInfo> excludedMembers = new();
+        private readonly HashSet<Type> excludedTypes = new();
+        private readonly Dictionary<MemberInfo, Delegate> membersSerializers = new();
+        private readonly Dictionary<Type, Delegate> typeSerializers = new();
 
         private Func<object, string> handleMaxRecursion;
 
@@ -20,14 +20,14 @@ namespace ObjectPrinting
             return PrintToString(obj, 0);
         }
 
-        public PrintingConfig<TOwner> OnMaxRecursion(Func<object,string> recursionHandler)
+        public PrintingConfig<TOwner> WithRecursionHandler(Func<object,string> recursionHandler)
         {
             handleMaxRecursion = recursionHandler;
 
             return this;
         }
 
-        public PrintingConfig<TOwner> Exclude<TPropType>(Expression<Func<TOwner, TPropType>> exclude)
+        public PrintingConfig<TOwner> Excluding<TPropType>(Expression<Func<TOwner, TPropType>> exclude)
         {
             if (exclude == null)
                 throw new ArgumentNullException();
@@ -38,33 +38,12 @@ namespace ObjectPrinting
             return this;
         }
 
-        private static MemberInfo GetMemberInfo<TPropType>(Expression<Func<TOwner, TPropType>> expression)
-        {
-            var memberExpression = expression.Body is UnaryExpression unaryExpression
-                ? (MemberExpression)unaryExpression.Operand
-                : (MemberExpression)expression.Body;
 
-            return memberExpression.Member;
-        }
-
-
-        public PrintingConfig<TOwner> Exclude<TPropType>()
+        public PrintingConfig<TOwner> Excluding<TPropType>()
         {
             excludedTypes.Add(typeof(TPropType));
 
             return this;
-        }
-
-        private string PrintToString(object obj, int nestingLevel)
-        {
-            var serializer = new Serializer(
-                excludedMembers,
-                excludedTypes,
-                membersSerializers,
-                typeSerializers,
-                handleMaxRecursion);
-
-            return serializer.Serialize(obj, nestingLevel);
         }
 
         public IInnerPrintingConfig<TOwner, TPropType> Printing<TPropType>()
@@ -100,6 +79,27 @@ namespace ObjectPrinting
         {
             serializer = null;
             return membersSerializers.TryGetValue(memberInfo, out serializer);
+        }
+        
+        private static MemberInfo GetMemberInfo<TPropType>(Expression<Func<TOwner, TPropType>> expression)
+        {
+            var memberExpression = expression.Body is UnaryExpression unaryExpression
+                ? (MemberExpression)unaryExpression.Operand
+                : (MemberExpression)expression.Body;
+
+            return memberExpression.Member;
+        }
+        
+        private string PrintToString(object obj, int nestingLevel)
+        {
+            var serializer = new Serializer(
+                excludedMembers,
+                excludedTypes,
+                membersSerializers,
+                typeSerializers,
+                handleMaxRecursion);
+
+            return serializer.Serialize(obj, nestingLevel);
         }
     }
 }

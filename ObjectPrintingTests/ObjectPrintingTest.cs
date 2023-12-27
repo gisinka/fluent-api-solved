@@ -21,7 +21,7 @@ namespace ObjectPrintingTests
             var printer = ObjectPrinter.For<Person>();
 
             printer
-                .OnMaxRecursion(_ => throw new ArgumentException());
+                .WithRecursionHandler(_ => throw new ArgumentException());
 
             Action act = () => { printer.PrintToString(person); };
 
@@ -42,7 +42,7 @@ namespace ObjectPrintingTests
 
             var actual = parent
                 .CreatePrinter()
-                .OnMaxRecursion((_) => "РЕКУРСИЯ")
+                .WithRecursionHandler((_) => "РЕКУРСИЯ")
                 .PrintToString(parent);
 
             actual.Should().Be($"Parent{Environment.NewLine}\tPerson = Person{Environment.NewLine}\t\tId = 00000000-0000-0000-0000-000000000000{Environment.NewLine}\t\tName = null{Environment.NewLine}\t\tHeight = 0{Environment.NewLine}\t\tAge = 0{Environment.NewLine}\t\tSubPerson = SubPerson{Environment.NewLine}\t\t\tPerson = null{Environment.NewLine}\t\t\tAge = 0{Environment.NewLine}\t\tPublicField = null{Environment.NewLine}\tSubPerson = SubPerson{Environment.NewLine}\t\tPerson = null{Environment.NewLine}\t\tAge = 0{Environment.NewLine}");
@@ -56,7 +56,7 @@ namespace ObjectPrintingTests
 
             var actual = currentObject
                 .CreatePrinter()
-                .OnMaxRecursion((_) => "РЕКУРСИЯ")
+                .WithRecursionHandler((_) => "РЕКУРСИЯ")
                 .PrintToString(currentObject);
 
             actual.Should().Be($"SomethingObject{Environment.NewLine}\tToSameObject = РЕКУРСИЯ{Environment.NewLine}\tCount = 1{Environment.NewLine}");
@@ -68,8 +68,8 @@ namespace ObjectPrintingTests
             var person = new Person { Name = "Alex", Age = 19 };
 
             var printer = ObjectPrinter.For<Person>();
-            printer.Exclude(p => p.Age)
-                .Exclude<double>();
+            printer.Excluding(p => p.Age)
+                .Excluding<double>();
 
             var actual = printer.PrintToString(person);
 
